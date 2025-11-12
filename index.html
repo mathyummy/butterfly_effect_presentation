@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>從藝人從軍看蝴蝶效應</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 30%, #3949ab 60%, #5c6bc0 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            font-weight: 900;
+            letter-spacing: 3px;
+            color: #ffffff;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+            color: #e3f2fd;
+        }
+
+        .nav-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: #f8f9fa;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            position: relative;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: #667eea;
+            transform: scale(1.3);
+        }
+
+        .dot:hover {
+            background: #667eea;
+            transform: scale(1.2);
+        }
+
+        .dot-label {
+            font-size: 0.7em;
+            color: #666;
+            text-align: center;
+            max-width: 80px;
+            line-height: 1.2;
+        }
+
+        .slide {
+            display: none;
+            padding: 40px;
+            animation: fadeIn 0.5s;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .objectives li {
+            margin: 15px 0;
+            padding-left: 30px;
+            line-height: 1.8;
+            position: relative;
+        }
+
+        .objectives li:before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+        }
+
+        .video-container {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f5f7fa;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+        }
+
+        .video-link {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+
+        .video-link:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding-left: 20px;
+            margin: 20px 0;
+            font-style: italic;
+            color: #495057;
+            font-size: 1.2em;
+            line-height: 1.8;
+        }
+
+        .video-segment {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .video-segment:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .segment-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .segment-header:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #653a8b 100%);
+        }
+
+        .segment-header h3 {
+            margin: 0;
+            color: white;
+            font-size: 1.3em;
+        }
+
+        .toggle-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s;
+        }
+
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        .segment-content {
+            padding: 25px;
+            display: none;
+        }
+
+        .segment-content.show {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 2000px;
+            }
+        }
+
+        .video-segments {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .segment-btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 10px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .segment-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .question-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .question-btn:hover {
+            background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .question-btn.active {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+        }
+
+        .question-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .question-box.show {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        .question-box p {
+            margin: 10px 0;
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #856404;
+        }
+
+        .hint-box {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .news-box {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            padding: 25px;
+            margin: 15px 0;
+            border-radius: 10px;
+            position: relative;
+            font-size: 1.15em;
+            line-height: 1.8;
+            border-left: 5px solid #667eea;
+        }
+
+        .news-box h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .news-box p {
+            color: #212529;
+            user-select: text;
+            cursor: text;
+        }
+
+        .markable {
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+
+        .markable:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .marked-support {
+            background: #d4edda;
+            border-bottom: 2px solid #28a745;
+        }
+
+        .marked-criticism {
+            background: #f8d7da;
+            border-bottom: 2px solid #dc3545;
+        }
+
+        .marked-impact {
+            background: #d1ecf1;
+            border-bottom: 2px solid #17a2b8;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .category-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .quiz-container {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+
+        .quiz-container h3 {
+            color: #495057;
+            margin-bottom: 20px;
+        }
+
+        .quiz-option {
+            background: white;
+            padding: 15px 20px;
+            margin: 12px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .quiz-option:hover:not(.correct):not(.disabled) {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .quiz-option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            cursor: default;
+        }
+
+        .quiz-option.wrong {
+            background: #f8d7da;
+            border-color: #dc3545;
+            animation: shake 0.5s;
+        }
+
+        .quiz-option.disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .explanation {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        .explanation p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .toggle-explanation-btn {
+            margin-top: 15px;
+            padding: 12px 30px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            display: none;
+            transition: all 0.3s;
+        }
+
+        .toggle-explanation-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .toggle-explanation-btn.show {
+            display: inline-block;
+        }
+
+        .indicator {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #667eea;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .discussion-box {
+            background: #e8f4f8;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .discussion-box h4 {
+            color: #0277bd;
+            margin-bottom: 15px;
+        }
+
+        .discussion-box li {
+            margin: 12px 0;
+            line-height: 1.8;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .summary-box h2 {
+            color: white;
+            border-bottom: 2px solid white;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .summary-box ul li {
+            color: white;
+            font-size: 1.2em;
+            margin: 15px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .summary-box ul li:before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: white;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px 40px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-prev {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-next {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .feedback-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 1000;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .feedback-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .feedback-popup.correct {
+            border: 4px solid #28a745;
+        }
+
+        .feedback-popup.wrong {
+            border: 4px solid #dc3545;
+        }
+
+        .feedback-popup h3 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .feedback-popup.correct h3 {
+            color: #28a745;
+        }
+
+        .feedback-popup.wrong h3 {
+            color: #dc3545;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        .butterfly-icon {
+            font-size: 8em;
+            margin: 40px 0;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(5deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🦋 從藝人從軍看蝴蝶效應</h1>
+            <p>小行為的大影響</p>
+            <p style="margin-top: 10px; font-size: 0.95em;">國中議題課程｜公民素養課｜45分鐘</p>
+        </div>
+
+        <div class="nav-dots" id="navDots"></div>
+
+        <!-- 幻燈片 1: 封面 -->
+        <div class="slide active" data-slide="1">
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 400px;">
+                <div class="butterfly-icon">🦋</div>
+                <h2 style="border: none; font-size: 3em; text-align: center;">從藝人從軍看蝴蝶效應</h2>
+                <p style="font-size: 1.5em; color: #764ba2; text-align: center; margin-top: 20px;">小行為的大影響</p>
+            </div>
+        </div>
+
+        <!-- 幻燈片 2: 課程目標 -->
+        <div class="slide" data-slide="2">
+            <h2>📚 課程目標 🎯</h2>
+            <div class="objectives">
+                <ul>
+                    <li>認識蝴蝶效應的意涵與例子</li>
+                    <li>觀察並比較兩則藝人從軍新聞的不同觀點</li>
+                    <li>分析個人行為如何透過媒體造成社會影響</li>
+                    <li>練習資料理解、因果推論與價值思辨</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 幻燈片 3: 什麼是蝴蝶效應 -->
+        <div class="slide" data-slide="3">
+            <h2>🦋 什麼是蝴蝶效應?</h2>
+            <div class="video-container">
+                <a href="https://www.youtube.com/watch?v=bO1bFDMecEQ" target="_blank" class="video-link">▶ 觀看影片介紹</a>
+            </div>
+            <blockquote>
+                一隻蝴蝶在巴西煽動翅膀,可能在德州引起龍捲風。<br>
+                意思是——微小的行為,可能造成巨大的變化。
+            </blockquote>
+            
+            <button class="question-btn" onclick="toggleThinkingQuestion()">
+                <span>💭</span> 查看思考問題
+            </button>
+            <div class="question-box" id="thinkingQuestion">
+                <p>1️⃣ 蝴蝶象徵什麼?</p>
+                <p>2️⃣ 為什麼小行為也可能造成大變化?</p>
+                <p>3️⃣ 你有沒有做過一件小事卻造成大影響?</p>
+            </div>
+        </div>
+
+        <!-- 幻燈片 4: 影片① 正面藝人從軍 -->
+        <div class="slide" data-slide="4">
+            <h2>🎬 影片① 正面藝人從軍</h2>
+            <div class="video-container">
+                <p><strong>說明:</strong> 藝人主動從軍,展現責任與愛國精神</p>
+                <div class="video-segments">
+                    <a href="https://www.youtube.com/watch?v=V3kzyEpzmJY&t=0s" target="_blank" class="segment-btn">▶ 觀看 0:00-0:40</a>
+                    <a href="https://www.youtube.com/watch?v=V3kzyEpzmJY&t=40s" target="_blank" class="segment-btn">▶ 觀看 0:40-1:20</a>
+                    <a href="https://www.youtube.com/watch?v=V3kzyEpzmJY&t=80s" target="_blank" class="segment-btn">▶ 觀看 1:20-結尾</a>
+                </div>
+            </div>
+
+            <div class="video-segment">
+                <div class="segment-header" onclick="toggleSegment(1)">
+                    <h3>停格提問 - 第一段 (0:00–0:40)</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="segment-content" id="segment1">
+                    <p style="font-size: 1.1em; line-height: 1.8; margin-bottom: 10px;"><strong>💭 提問:</strong> 這位藝人為什麼選擇在此時入伍?</p>
+                    <p style="font-size: 0.95em; color: #666; line-height: 1.6;"><strong>教學目的:</strong> 理解動機與價值觀</p>
+                </div>
+            </div>
+
+            <div class="video-segment">
+                <div class="segment-header" onclick="toggleSegment(2)">
+                    <h3>停格提問 - 第二段 (0:40–1:20)</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="segment-content" id="segment2">
+                    <p style="font-size: 1.1em; line-height: 1.8; margin-bottom: 10px;"><strong>💭 提問:</strong> 媒體與網友的反應有哪些?</p>
+                    <p style="font-size: 0.95em; color: #666; line-height: 1.6;"><strong>教學目的:</strong> 辨識社會觀點</p>
+                </div>
+            </div>
+
+            <div class="video-segment">
+                <div class="segment-header" onclick="toggleSegment(3)">
+                    <h3>停格提問 - 第三段 (1:20–結尾)</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="segment-content" id="segment3">
+                    <p style="font-size: 1.1em; line-height: 1.8; margin-bottom: 10px;"><strong>💭 提問:</strong> 他這個選擇可能帶來哪些影響?</p>
+                    <p style="font-size: 0.95em; color: #666; line-height: 1.6;"><strong>教學目的:</strong> 推論正向蝴蝶效應</p>
+                </div>
+            </div>
+
+            <div class="hint-box">
+                💡 提示: 觀察 → 感受 → 推論
+            </div>
+        </div>
+
+        <!-- 幻燈片 5: 影片② 負面藝人閃兵 -->
+        <div class="slide" data-slide="5">
+            <h2>🎬 影片② 負面藝人閃兵</h2>
+            <div class="video-container">
+                <p><strong>說明:</strong> 藝人延遲或規避服役引發輿論爭議</p>
+                <div class="video-segments">
+                    <a href="https://www.youtube.com/watch?v=IaWVAe_ieG4&t=0s" target="_blank" class="segment-btn">▶ 觀看 0:00-0:30</a>
+                    <a href="https://www.youtube.com/watch?v=IaWVAe_ieG4&t=30s" target="_blank" class="segment-btn">▶ 觀看 0:30-1:15</a>
+                    <a href="https://www.youtube.com/watch?v=IaWVAe_ieG4&t=75s" target="_blank" class="segment-btn">▶ 觀看 1:15-結尾</a>
+                </div>
+            </div>
+
+            <div class="video-segment">
+                <div class="segment-header" onclick="toggleSegment(4)">
+                    <h3>停格提問 - 第一段 (0:00–0:30)</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="segment-content" id="segment4">
+                    <p style="font-size: 1.1em; line-height: 1.8; margin-bottom: 10px;"><strong>💭 提問:</strong> 影片報導了哪些關鍵事實?</p>
+                    <p style="font-size: 0.95em; color: #666; line-height: 1.6;"><strong>教學目的:</strong> 理解事件背景</p>
+                </div>
+            </div>
+
+            <div class="video-segment">
+                <div class="segment-header" onclick="toggleSegment(5)">
+                    <h3>停格提問 - 第二段 (0:30–1:15)</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="segment-content" id="segment5">
+                    <p style="font-size: 1.1em; line-height: 1.8; margin-bottom: 10px;"><strong>💭 提問:</strong> 媒體與社群如何放大這個事件?</p>
+                    <p style="font-size: 0.95em; color: #666; line-height: 1.6;"><strong>教學目的:</strong> 辨識情緒化傳播</p>
+                </div>
+            </div>
+
+            <div class="video-segment">
+                <div class="segment-header" onclick="toggleSegment(6)">
+                    <h3>停格提問 - 第三段 (1:15–結尾)</h3>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="segment-content" id="segment6">
+                    <p style="font-size: 1.1em; line-height: 1.8; margin-bottom: 10px;"><strong>💭 提問:</strong> 這件事可能對社會或兵役觀感造成什麼影響?</p>
+                    <p style="font-size: 0.95em; color: #666; line-height: 1.6;"><strong>教學目的:</strong> 推論負面連鎖效應</p>
+                </div>
+            </div>
+
+            <div class="hint-box">
+                💡 提示: 觀察 → 比較 → 思辨
+            </div>
+        </div>
+
+        <!-- 幻燈片 6: 新聞文本閱讀 -->
+        <div class="slide" data-slide="6">
+            <h2>📰 新聞文本閱讀</h2>
+            <div style="background: #f5f7fa; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                <h3 style="color: #667eea;">📝 學生活動</h3>
+                <p style="line-height: 1.8; margin-top: 15px;">
+                    請點選文字來標記類別:
+                </p>
+                <div style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
+                    <button class="category-btn" onclick="setCategory('support')" style="background: #28a745;">🔵 支持立場</button>
+                    <button class="category-btn" onclick="setCategory('criticism')" style="background: #dc3545;">🔴 批評立場</button>
+                    <button class="category-btn" onclick="setCategory('impact')" style="background: #17a2b8;">🟢 社會影響</button>
+                    <button class="category-btn" onclick="clearMarks()" style="background: #9e9e9e;">🔄 清除標記</button>
+                </div>
+            </div>
+            <div class="news-box" id="newsText">
+                <h3>綜合新聞報導</h3>
+                <p>
+                    <span class="markable">知名藝人A今日正式宣布主動入伍服役,此舉引起社會各界廣泛好評。</span>
+                    <span class="markable">許多民眾與專家學者認為,他的決定展現了對國家的責任感與愛國精神,樹立了良好的公眾形象。</span>
+                    <span class="markable">然而,另一位藝人B因多次延遲服役而遭到輿論批評,引發社會熱議與爭議風暴。</span>
+                    <span class="markable">有網友質疑其是否利用特殊管道規避兵役義務,認為此舉破壞了社會公平性,也影響了公眾人物應有的誠信與責任感。</span>
+                    <span class="markable">兩起事件持續在媒體與社群平台發酵,引發關於兵役制度、公平正義及名人責任的多方討論。</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- 幻燈片 7: 模擬會考題① -->
+        <div class="slide" data-slide="7">
+            <h2>📝 模擬會考題 ① (資料理解)</h2>
+            <div class="quiz-container">
+                <h3>題目: 社會對藝人行為的共同關注是什麼?</h3>
+                <div class="quiz-option" onclick="checkAnswer(this, false, 1)">A. 藝人收入多寡</div>
+                <div class="quiz-option" onclick="checkAnswer(this, true, 1)">B. 對責任與形象的期待</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false, 1)">C. 演技表現</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false, 1)">D. 服役時間長短</div>
+                <div class="indicator">👉 能力指標:理解社會觀點</div>
+                <button class="toggle-explanation-btn" id="toggleBtn1" onclick="toggleExplanation(1)">📖 查看解析</button>
+                <div id="explanation1" class="explanation">
+                    <p style="margin-top: 0;">
+                        <strong>💡 解析:</strong>從兩則新聞可以看出,社會大眾對於藝人的關注焦點在於他們是否展現應有的「責任感」與「公眾形象」,而非單純的收入、演技或服役時間長短。這反映出社會期待公眾人物能夠以身作則,承擔應盡的義務。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 幻燈片 8: 模擬會考題② -->
+        <div class="slide" data-slide="8">
+            <h2>🤔 模擬會考題 ② (因果推論)</h2>
+            <div class="quiz-container">
+                <h3>題目: 若媒體持續報導閃兵事件,下列哪一結果最可能發生?</h3>
+                <div class="quiz-option" onclick="checkAnswer(this, false, 2)">A. 年輕人對從軍產生反感</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false, 2)">B. 政府立即取消兵役</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false, 2)">C. 媒體停止報導娛樂新聞</div>
+                <div class="quiz-option" onclick="checkAnswer(this, true, 2)">D. 社會對兵役制度討論更熱烈</div>
+                <div class="indicator">👉 能力指標:推論社會連鎖效應</div>
+                <button class="toggle-explanation-btn" id="toggleBtn2" onclick="toggleExplanation(2)">📖 查看解析</button>
+                <div id="explanation2" class="explanation">
+                    <p style="margin-top: 0;">
+                        <strong>💡 解析:</strong>媒體持續報導爭議事件時,通常會引發更多社會討論與關注。閃兵事件會促使民眾思考兵役制度的公平性、必要性與改革方向,進而形成更熱烈的公共討論。選項A、B、C都過於極端或不符合實際情況。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 幻燈片 9: 模擬會考題③ -->
+        <div class="slide" data-slide="9">
+            <h2>💡 模擬會考題 ③ (價值判斷)</h2>
+            <div class="quiz-container">
+                <h3>題目: 下列哪一說法最能體現蝴蝶效應的社會意涵?</h3>
+                <div class="quiz-option" onclick="checkAnswer(this, false, 3)">A. 小行為不會造成改變</div>
+                <div class="quiz-option" onclick="checkAnswer(this, true, 3)">B. 個人行為可能引起廣泛影響</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false, 3)">C. 只有政治人物影響社會</div>
+                <div class="quiz-option" onclick="checkAnswer(this, false, 3)">D. 社會反應與媒體無關</div>
+                <div class="indicator">👉 能力指標:抽象概念與價值思考</div>
+                <button class="toggle-explanation-btn" id="toggleBtn3" onclick="toggleExplanation(3)">📖 查看解析</button>
+                <div id="explanation3" class="explanation">
+                    <p style="margin-top: 0;">
+                        <strong>💡 解析:</strong>蝴蝶效應的核心概念就是「微小的初始變化可能導致巨大的連鎖反應」。在社會脈絡中,這意味著個人的行為(無論是正面或負面)都可能透過媒體傳播、社會輿論等途徑,產生遠超預期的廣泛影響。藝人從軍的案例正是最好的例證。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 幻燈片 10: 小組討論 -->
+        <div class="slide" data-slide="10">
+            <h2>🗣️ 小組討論 💬</h2>
+            <div class="discussion-box">
+                <h4>💭 討論題:</h4>
+                <ul>
+                    <li>為什麼同樣是「當兵」,社會反應會不同?</li>
+                    <li>媒體報導方式如何影響大眾看法?</li>
+                    <li>哪一件事更容易引起「蝴蝶效應」?</li>
+                    <li>你是否有過「小行為造成大影響」的經驗?</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 幻燈片 11: 課程統整 -->
+        <div class="slide" data-slide="11">
+            <h2>🧭 課程統整</h2>
+            <div class="summary-box">
+                <h2>重點回顧:</h2>
+                <ul>
+                    <li>1️⃣ 小行為可能引發連鎖社會反應。</li>
+                    <li>2️⃣ 媒體在蝴蝶效應中扮演關鍵角色。</li>
+                    <li>3️⃣ 理解事件背後的多重觀點,是公民素養的重要能力。</li>
+                </ul>
+            </div>
+            <div class="discussion-box" style="margin-top: 30px;">
+                <h4>🌟 延伸問題:</h4>
+                <p style="margin-top: 15px; line-height: 1.8;">
+                    📌 你生活中,有沒有一個「小舉動」帶來了大影響?
+                </p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-prev" onclick="prevSlide()">← 上一頁</button>
+            <button class="btn btn-next" onclick="nextSlide()">下一頁 →</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="feedback-popup" id="feedbackPopup">
+        <h3 id="feedbackTitle"></h3>
+        <p id="feedbackMessage"></p>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 11;
+        let currentCategory = null;
+        const slideLabels = [
+            '封面',
+            '課程目標',
+            '蝴蝶效應',
+            '正面從軍',
+            '爭議閃兵',
+            '新聞閱讀',
+            '會考題①',
+            '會考題②',
+            '會考題③',
+            '小組討論',
+            '課程統整'
+        ];
+
+        function initNavDots() {
+            const navDots = document.getElementById('navDots');
+            for (let i = 1; i <= totalSlides; i++) {
+                const navItem = document.createElement('div');
+                navItem.className = 'nav-item';
+                
+                const dot = document.createElement('div');
+                dot.className = 'dot' + (i === 1 ? ' active' : '');
+                dot.onclick = () => goToSlide(i);
+                
+                const label = document.createElement('div');
+                label.className = 'dot-label';
+                label.textContent = slideLabels[i - 1];
+                
+                navItem.appendChild(dot);
+                navItem.appendChild(label);
+                navDots.appendChild(navItem);
+            }
+        }
+
+        function updateSlide() {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            document.querySelector(`[data-slide="${currentSlide}"]`).classList.add('active');
+
+            document.querySelectorAll('.nav-item .dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index + 1 === currentSlide);
+            });
+
+            document.querySelector('.btn-prev').disabled = currentSlide === 1;
+            document.querySelector('.btn-next').disabled = currentSlide === totalSlides;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        function goToSlide(slideNumber) {
+            currentSlide = slideNumber;
+            updateSlide();
+        }
+
+        function toggleThinkingQuestion() {
+            const questionBox = document.getElementById('thinkingQuestion');
+            const btn = event.currentTarget;
+            
+            if (questionBox.classList.contains('show')) {
+                questionBox.classList.remove('show');
+                btn.innerHTML = '<span>💭</span> 查看思考問題';
+                btn.classList.remove('active');
+            } else {
+                questionBox.classList.add('show');
+                btn.innerHTML = '<span>📕</span> 收起問題';
+                btn.classList.add('active');
+            }
+        }
+
+        function toggleSegment(segmentNum) {
+            const content = document.getElementById('segment' + segmentNum);
+            const header = event.currentTarget;
+            const icon = header.querySelector('.toggle-icon');
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                icon.classList.remove('rotated');
+            } else {
+                content.classList.add('show');
+                icon.classList.add('rotated');
+            }
+        }
+
+        function setCategory(category) {
+            currentCategory = category;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.style.opacity = '0.6';
+            });
+            event.target.style.opacity = '1';
+        }
+
+        function clearMarks() {
+            document.querySelectorAll('.markable').forEach(span => {
+                span.className = 'markable';
+            });
+            currentCategory = null;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.style.opacity = '1';
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('markable') && currentCategory) {
+                e.target.classList.remove('marked-support', 'marked-criticism', 'marked-impact');
+                if (currentCategory === 'support') {
+                    e.target.classList.add('marked-support');
+                } else if (currentCategory === 'criticism') {
+                    e.target.classList.add('marked-criticism');
+                } else if (currentCategory === 'impact') {
+                    e.target.classList.add('marked-impact');
+                }
+            }
+        });
+
+        function checkAnswer(element, isCorrect, questionNum) {
+            if (element.classList.contains('disabled') || element.classList.contains('correct')) {
+                return;
+            }
+
+            const container = element.parentElement;
+            const options = container.querySelectorAll('.quiz-option');
+            
+            if (isCorrect) {
+                element.classList.add('correct');
+                options.forEach(opt => {
+                    if (opt !== element) {
+                        opt.classList.add('disabled');
+                    }
+                    opt.onclick = null;
+                });
+                
+                showFeedback('你的判斷很正確,表現很好! 🎉', 'correct');
+                
+                document.getElementById('toggleBtn' + questionNum).classList.add('show');
+            } else {
+                element.classList.add('wrong');
+                
+                setTimeout(() => {
+                    element.classList.remove('wrong');
+                }, 500);
+                
+                showFeedback('回答錯了,請再想想。 🤔', 'wrong');
+            }
+        }
+
+        function showFeedback(message, type) {
+            const popup = document.getElementById('feedbackPopup');
+            const overlay = document.getElementById('overlay');
+            const titleEl = document.getElementById('feedbackTitle');
+            const messageEl = document.getElementById('feedbackMessage');
+            
+            if (type === 'correct') {
+                titleEl.textContent = '✅ 答對了!';
+            } else {
+                titleEl.textContent = '❌ 再試試';
+            }
+            messageEl.textContent = message;
+            
+            popup.className = 'feedback-popup show ' + type;
+            overlay.classList.add('show');
+            
+            setTimeout(() => {
+                popup.classList.remove('show');
+                overlay.classList.remove('show');
+            }, 2000);
+        }
+
+        function toggleExplanation(questionNum) {
+            const explanation = document.getElementById('explanation' + questionNum);
+            const btn = document.getElementById('toggleBtn' + questionNum);
+            
+            if (explanation.classList.contains('show')) {
+                explanation.classList.remove('show');
+                btn.textContent = '📖 查看解析';
+                btn.style.background = '#4caf50';
+            } else {
+                explanation.classList.add('show');
+                btn.textContent = '📕 收起解析';
+                btn.style.background = '#ff9800';
+            }
+        }
+
+        document.getElementById('overlay').addEventListener('click', () => {
+            document.getElementById('feedbackPopup').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === 'ArrowRight') nextSlide();
+        });
+
+        initNavDots();
+    </script>
+</body>
+</html>
